@@ -16,6 +16,8 @@ class Todo(db.Model):
     title = db.Column(db.String(100), nullable=False)
     completed = db.Column(db.Boolean, default=False)
     date_created = db.Column(db.DateTime, default=datetime.utcnow)
+    due_date = db.Column(db.DateTime, nullable=True)
+    priority = db.Column(db.String(10), default='Medium')
 
     def __repr__(self):
         return f'<Todo {self.id}>'
@@ -27,10 +29,20 @@ with app.app_context():
 def index():
     if request.method == 'POST':
         task_content = request.form['content']
+        task_priority = request.form.get('priority', 'Medium')
+        task_due_date_str = request.form.get('due_date')
+        
         if not task_content:
             return redirect('/')
             
-        new_task = Todo(title=task_content)
+        task_due_date = None
+        if task_due_date_str:
+            try:
+                task_due_date = datetime.strptime(task_due_date_str, '%Y-%m-%d')
+            except ValueError:
+                pass
+            
+        new_task = Todo(title=task_content, priority=task_priority, due_date=task_due_date)
 
         try:
             db.session.add(new_task)
@@ -53,6 +65,32 @@ def delete(id):
         return redirect('/')
     except:
         return 'There was a problem deleting that task'
+
+@app.route('/edit/<int:id>', methods=['GET', 'POST'])
+def edit(id):
+    task = Todo.query.get_or_404(id)
+
+    if request.method == 'POST':
+        task.title = request.form['content']
+        task.priority = request.form.get('priority', 'Medium')
+        
+        task_due_date_str = request.form.get('due_date')
+        if task_due_date_str:
+            try:
+                task.due_date = datetime.strptime(task_due_date_str, '%Y-%m-%d')
+            except ValueError:
+                task.due_date = None
+        else:
+            task.due_date = None
+
+        try:
+            db.session.commit()
+            return redirect('/')
+        except:
+            return 'There was an issue updating your task'
+
+    else:
+        return render_template('edit.html', task=task)
 
 @app.route('/update/<int:id>')
 def update(id):
