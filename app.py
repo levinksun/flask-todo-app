@@ -18,9 +18,19 @@ class Todo(db.Model):
     date_created = db.Column(db.DateTime, default=datetime.utcnow)
     due_date = db.Column(db.DateTime, nullable=True)
     priority = db.Column(db.String(10), default='Medium')
+    date_completed = db.Column(db.DateTime, nullable=True)
 
     def __repr__(self):
         return f'<Todo {self.id}>'
+    
+    @property
+    def duration(self):
+        if self.completed and self.date_completed and self.date_created:
+            diff = self.date_completed - self.date_created
+            days = diff.days
+            hours = diff.seconds // 3600
+            return f"{days}d {hours}h"
+        return None
 
 with app.app_context():
     db.create_all()
@@ -98,6 +108,11 @@ def update(id):
 
     try:
         task.completed = not task.completed
+        if task.completed:
+            task.date_completed = datetime.utcnow()
+        else:
+            task.date_completed = None
+            
         db.session.commit()
         return redirect('/')
     except:

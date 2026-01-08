@@ -49,8 +49,16 @@
             <span class="task-content">{{ task.title }}</span>
             <div class="task-meta">
                 <span class="badge priority-{{ task.priority|lower }}">{{ task.priority }}</span>
+                <span class="created-date" title="Created At">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                    {{ task.date_created.strftime('%Y-%m-%d %H:%M') }}
+                </span>
                 {% if task.due_date %}
-                <span class="due-date">
+                <span class="due-date" title="Due Date">
                     <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
@@ -59,6 +67,16 @@
                         <line x1="3" y1="10" x2="21" y2="10"></line>
                     </svg>
                     {{ task.due_date.strftime('%b %d') }}
+                </span>
+                {% endif %}
+                {% if task.completed and task.duration %}
+                <span class="duration-badge" title="Time taken to complete">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                    Took {{ task.duration }}
                 </span>
                 {% endif %}
             </div>

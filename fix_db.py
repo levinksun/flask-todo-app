@@ -29,5 +29,13 @@ if 'priority' not in columns:
     except Exception as e:
         print(f"Error adding priority: {e}")
 
+if 'date_completed' not in columns:
+    print("Adding date_completed column...")
+    try:
+        c.execute('ALTER TABLE todo ADD COLUMN date_completed DATETIME')
+        print("Success.")
+    except Exception as e:
+        print(f"Error adding date_completed: {e}")
+
 conn.commit()
 conn.close()
