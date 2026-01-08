@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="todo-app">
+    <header>
+        <h1>My Tasks</h1>
+        <p class="subtitle">{{ tasks|length }} tasks remaining</p>
+    </header>
+
+    <form action="/" method="POST" class="add-task-form">
+        <input type="text" name="content" id="content" placeholder="Add a new task..." autocomplete="off">
+        <button type="submit" class="add-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+        </button>
+    </form>
+
+    <div class="task-list">
+        {% if tasks|length < 1 %} <div class="empty-state">
+            <p>All caught up! 🎉</p>
+    </div>
+    {% else %}
+    {% for task in tasks %}
+    <div class="task-item {% if task.completed %}completed{% endif %}">
+        <a href="/update/{{ task.id }}" class="check-btn">
+            <div class="checkbox">
+                {% if task.completed %}
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+                {% endif %}
+            </div>
+        </a>
+        <span class="task-content">{{ task.title }}</span>
+        <a href="/delete/{{ task.id }}" class="delete-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="3 6 5 6 21 6"></polyline>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+            </svg>
+        </a>
+    </div>
+    {% endfor %}
+    {% endif %}
+</div>
+</div>
+{% endblock %}
