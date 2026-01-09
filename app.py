@@ -15,7 +15,7 @@ class Todo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
     completed = db.Column(db.Boolean, default=False)
-    date_created = db.Column(db.DateTime, default=datetime.utcnow)
+    date_created = db.Column(db.DateTime, default=datetime.now)
     due_date = db.Column(db.DateTime, nullable=True)
     priority = db.Column(db.String(10), default='Medium')
     date_completed = db.Column(db.DateTime, nullable=True)
@@ -29,7 +29,8 @@ class Todo(db.Model):
             diff = self.date_completed - self.date_created
             days = diff.days
             hours = diff.seconds // 3600
-            return f"{days}d {hours}h"
+            minutes = (diff.seconds % 3600) // 60
+            return f"{days}d {hours}h {minutes}m"
         return None
 
 with app.app_context():
@@ -109,7 +110,7 @@ def update(id):
     try:
         task.completed = not task.completed
         if task.completed:
-            task.date_completed = datetime.utcnow()
+            task.date_completed = datetime.now()
         else:
             task.date_completed = None
             
